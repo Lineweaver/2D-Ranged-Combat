@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EnemyProjectile : MonoBehaviour
+{
+    [SerializeField] float speed;
+    [SerializeField] float lifeTime;
+    [SerializeField] float damage;    
+
+    private Vector2 target;
+    PlayerController player;
+
+    [SerializeField] GameObject destroyEffect;
+    GameObject destroyEffectClone;
+
+    void Start()
+    {
+        player = FindObjectOfType<PlayerController>();
+        target = new Vector2(player.transform.position.x, player.transform.position.y);
+
+        Invoke("DestroyProjectile", lifeTime);
+    }
+
+    void Update()
+    {
+        transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Player"))
+        {
+            player.health -= damage;
+            DestroyProjectile();
+        }
+    }
+
+    void DestroyProjectile()
+    {
+        destroyEffectClone = Instantiate(destroyEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+        Destroy(destroyEffectClone, 1f);
+    }
+}
