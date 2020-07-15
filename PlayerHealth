@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerHealth : MonoBehaviour
+{
+    PlayerController player;
+    Image healthBar;
+    float maxHealth = 100f;
+
+    void Start()
+    {
+        player = FindObjectOfType<PlayerController>();
+        healthBar = GetComponent<Image>();
+        player.health = maxHealth;
+    }
+
+    void Update()
+    {
+        healthBar.fillAmount = player.health / maxHealth;
+    }
+}
