@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Projectile : MonoBehaviour
+{
+    [SerializeField] float lifeTime;
+    [SerializeField] float damage;
+    [SerializeField] GameObject destroyEffect;
+    GameObject destroyEffectClone;
+
+    void Start()
+    {
+        Invoke("DestroyProjectile", lifeTime);
+    }
+
+    void DestroyProjectile()
+    {
+        destroyEffectClone = Instantiate(destroyEffect, transform.position, Quaternion.identity);
+        Destroy(gameObject);
+        Destroy(destroyEffectClone, 1f);        
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            HitEnemy(collision);
+        }
+    }
+
+    private void HitEnemy(Collision2D collision)
+    {
+        DestroyProjectile();
+        MeleeEnemy enemy = collision.gameObject.GetComponent<MeleeEnemy>();
+        if (enemy != null)
+        {
+            enemy.enemyHealth -= damage;
+            Debug.Log("Current enemy health: " + enemy.enemyHealth);
+        }
+
+        RangedEnemy rangedEnemy = collision.gameObject.GetComponent<RangedEnemy>();
+        {
+            if (rangedEnemy != null)
+            {
+                rangedEnemy.rangedEnemyHealth -= damage;
+                Debug.Log("Current enemy health: " + rangedEnemy.rangedEnemyHealth);
+            }
+        }
+    }
+}
