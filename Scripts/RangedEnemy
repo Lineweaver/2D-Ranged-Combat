@@ -1,0 +1,66 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RangedEnemy : MonoBehaviour
+{
+    [SerializeField] float speed;
+    [SerializeField] float stoppingDistance;
+    [SerializeField] float retreatDistance;
+    public float rangedEnemyHealth;
+
+    float timeBtwShots;
+    [SerializeField] float startTimeBtwShots;
+    [SerializeField] GameObject projectile;
+
+    private Transform target;
+
+    void Start()
+    {
+        target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+
+        timeBtwShots = startTimeBtwShots;
+    }
+
+    void Update()
+    {
+        if (target != null)
+        {
+            if(Vector2.Distance(transform.position, target.transform.position) > stoppingDistance)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            }
+            else if(Vector2.Distance(transform.position, target.transform.position) < stoppingDistance && Vector2.Distance(transform.position, target.transform.position) > retreatDistance)
+            {
+                transform.position = this.transform.position;
+            }
+            else if(Vector2.Distance(transform.position, target.transform.position) < retreatDistance)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, target.position, -speed * Time.deltaTime);
+            }
+
+            if(timeBtwShots <= 0 )
+            {
+                Instantiate(projectile, transform.position, Quaternion.identity);
+                timeBtwShots = startTimeBtwShots;
+            }
+            else
+            {
+                timeBtwShots -= Time.deltaTime;
+            }
+        }
+        else
+            transform.position = this.transform.position;
+
+        Die();
+    }
+
+    void Die()
+    {
+        if (rangedEnemyHealth <= 0)
+        {
+            Destroy(gameObject);
+            Debug.Log("enemy is dead");
+        }
+    }
+}
