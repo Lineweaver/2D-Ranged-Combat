@@ -1,0 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MeleeEnemy : MonoBehaviour
+{
+    public float enemyHealth = 3;
+    [SerializeField] float speed;
+    private Transform target;
+
+    void Start()
+    {
+        target = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+    }
+
+    void Update()
+    {
+        if (target != null)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+        }
+        else
+            transform.position = this.transform.position;
+
+        Die();
+    }
+
+    void Die()
+    {
+        if (enemyHealth <= 0)
+        {
+            Destroy(gameObject);
+            Debug.Log("enemy is dead");
+        }
+    }
+}
